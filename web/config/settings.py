@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'django-insecure-xyz123abc'  # Cambia en producción
+SECRET_KEY = 'django-insecure-key-for-development-only'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
@@ -46,6 +46,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# Usar SQLite para Django (la API usa MySQL separadamente)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

@@ -83,7 +83,7 @@
         {% if data %}
             <ul class="item-list">
                 {% for item in data %}
-                    <li>{{ item.nombre }}</li>
+                    <li><strong>{{ item.nombre }}</strong> - ${{ item.precio }}<br>{{ item.descripcion }}</li>
                 {% endfor %}
             </ul>
         {% else %}
