@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Inicio</title>
+    <title>Usuarios</title>
     <style>
         * {
             margin: 0;
@@ -49,16 +49,21 @@
             font-size: 0.85rem;
             margin-bottom: 1rem;
         }
-        .item-list {
+        .user-list {
             list-style: none;
         }
-        .item-list li {
+        .user-item {
             padding: 0.75rem 0;
             border-bottom: 1px solid #eee;
+        }
+        .user-name {
+            font-weight: 600;
             color: #333;
         }
-        .item-list li:last-child {
-            border-bottom: none;
+        .user-email {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
         }
         .empty {
             color: #999;
@@ -74,20 +79,23 @@
             <a href="/usuarios/">Usuarios</a>
         </div>
 
-        <h1>Catálogo</h1>
+        <h1>Usuarios</h1>
         
         <div class="counter">
-            {{ data|length }} items
+            {{ usuarios|length }} total
         </div>
         
-        {% if data %}
-            <ul class="item-list">
-                {% for item in data %}
-                    <li>{{ item.nombre }}</li>
+        {% if usuarios %}
+            <ul class="user-list">
+                {% for usuario in usuarios %}
+                    <li class="user-item">
+                        <div class="user-name">{{ usuario.nombre }}</div>
+                        <div class="user-email">{{ usuario.email }}</div>
+                    </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <div class="empty">No hay datos disponibles</div>
+            <div class="empty">No hay usuarios registrados</div>
         {% endif %}
     </div>
 </body>

@@ -1,7 +1,6 @@
 version: '3.9'
 
 services:
-
   db:
     image: mysql:8
     container_name: mysql_db
@@ -13,6 +12,11 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  
+    healthcheck:                                      
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
 
   api:
     build: ./api
@@ -22,8 +26,17 @@ services:
       - "3000:3000"
     environment:
       DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: app_db
     depends_on:
-      - db
+      db:
+        condition: service_healthy  
+    healthcheck:                     
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/catalogo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   web:
     build: ./web
@@ -32,7 +45,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - api
+      api:
+        condition: service_healthy  
 
 volumes:
   db_data:
