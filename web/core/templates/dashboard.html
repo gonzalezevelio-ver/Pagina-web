@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Panel de Cliente{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>👋 Hola, {{ nombre }}</h1>
+    <p class="subtitle">Gestiona tu cuenta y documentos desde este panel.</p>
+    
+    <!-- Menú de pestañas -->
+    <div style="display:flex; gap:0.5rem; margin:1.5rem 0; border-bottom:1px solid #e9edf2; padding-bottom:0.5rem; flex-wrap:wrap;">
+        <button class="tab-btn active" data-tab="dni">📄 Subir DNI</button>
+        <button class="tab-btn" data-tab="historial">📜 Historial</button>
+        <button class="tab-btn" data-tab="morosidad">💰 Morosidad</button>
+    </div>
+
+    <!-- SECCIÓN: Subir DNI (visible por defecto) -->
+    <div id="tab-dni" class="tab-content active">
+        <h2 style="font-size:1.1rem; font-weight:600; margin-bottom:0.75rem;">📄 Subir DNI</h2>
+        <p class="text-sm text-muted" style="margin-bottom:1rem;">Sube una imagen o PDF de tu documento de identidad para verificar tu cuenta.</p>
+        
+        <form method="post" enctype="multipart/form-data" action="/dashboard/" id="dniForm">
+            {% csrf_token %}
+            <div class="flex" style="gap:1rem; align-items:flex-end; flex-wrap:wrap;">
+                <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+                    <input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required style="width:100%;">
+                </div>
+                <button type="submit" class="btn-primary">Subir DNI</button>
+            </div>
+        </form>
+        
+        {% if mensaje_dni %}
+            <div class="alert alert-success mt-2">{{ mensaje_dni }}</div>
+        {% endif %}
+    </div>
+
+    <!-- SECCIÓN: Historial (oculta por defecto) -->
+    <div id="tab-historial" class="tab-content">
+        <h2 style="font-size:1.1rem; font-weight:600; margin-bottom:0.75rem;">📜 Historial de Facturas</h2>
+        {% if historial %}
+            <div style="margin-top:0.5rem;">
+                {% for factura in historial %}
+                    <div class="factura-item">
+                        <div>
+                            <div style="font-weight:500;">{{ factura.productos|truncatechars:50 }}</div>
+                            <div class="factura-fecha">{{ factura.fecha|date:"d/m/Y H:i" }}</div>
+                        </div>
+                        <div class="factura-total">${{ factura.total|floatformat:2 }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center text-muted" style="padding:1rem 0;">
+                <p>No tienes facturas registradas.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- SECCIÓN: Morosidad (oculta por defecto) -->
+    <div id="tab-morosidad" class="tab-content">
+        <h2 style="font-size:1.1rem; font-weight:600; margin-bottom:0.75rem;">💰 Estado de Cuenta</h2>
+        {% if morosidad %}
+            <div class="morosidad-card">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+                    <div>
+                        <div class="text-sm text-muted">Cliente</div>
+                        <div style="font-weight:600; font-size:1.1rem;">{{ morosidad.cliente }}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-muted">Estado</div>
+                        <div class="estado {% if morosidad.estado == 'MOROSO' %}moroso{% else %}al-dia{% endif %}">
+                            {{ morosidad.estado }}
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:2rem; flex-wrap:wrap; margin-top:1rem; border-top:1px solid #e9edf2; padding-top:1rem;">
+                    <div>
+                        <div class="text-sm text-muted">Deuda total</div>
+                        <div style="font-weight:700; font-size:1.3rem; color:#dc2626;">${{ morosidad.deuda_total|floatformat:2 }}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-muted">Días vencidos</div>
+                        <div style="font-weight:600; font-size:1.1rem;">{{ morosidad.dias_vencidos }}</div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center text-muted" style="padding:1rem 0;">
+                <p>No se pudo obtener la información de morosidad.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .tab-btn {
+        background: transparent;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        color: #6b7280;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+    }
+    .tab-btn:hover {
+        background: #f3f4f6;
+        color: #1a1a2e;
+    }
+    .tab-btn.active {
+        background: #4f46e5;
+        color: white;
+    }
+    .tab-content {
+        display: none;
+        margin-top: 1.5rem;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .factura-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .factura-item:last-child { border-bottom: none; }
+    .factura-fecha { color: #6b7280; font-size: 0.85rem; }
+    .factura-total { font-weight: 600; color: #1a1a2e; }
+    .morosidad-card {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-top: 0.5rem;
+        border-left: 4px solid #4f46e5;
+    }
+    .morosidad-card .estado {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    .morosidad-card .estado.moroso { color: #dc2626; }
+    .morosidad-card .estado.al-dia { color: #16a34a; }
+    .flex { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .mt-2 { margin-top: 0.5rem; }
+    .text-center { text-align: center; }
+    .text-sm { font-size: 0.875rem; }
+    .text-muted { color: #6b7280; }
+</style>
+
+<script>
+    // Manejo de pestañas
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.tab-content');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Quitar clase active de todos los botones y contenidos
+                buttons.forEach(b => b.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+
+                // Activar el botón clickeado
+                this.classList.add('active');
+                // Mostrar el contenido correspondiente
+                const tabId = this.dataset.tab;
+                document.getElementById('tab-' + tabId).classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %}

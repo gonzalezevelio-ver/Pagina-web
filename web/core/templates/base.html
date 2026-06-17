@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destilería Highland - {% block title %}{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* NAVBAR */
+        .navbar {
+            background: white;
+            padding: 0.75rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e9edf2;
+        }
+        .navbar .logo {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #1a1a2e;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .navbar .logo span { color: #4f46e5; }
+        .navbar .logo small { font-size: 0.7rem; font-weight: 400; color: #6b7280; margin-left: 0.3rem; }
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 0.2rem 0.5rem;
+            flex: 1;
+            max-width: 400px;
+            margin: 0 1.5rem;
+        }
+        .search-box input {
+            border: none;
+            background: transparent;
+            padding: 0.5rem 0.5rem;
+            font-size: 0.9rem;
+            width: 100%;
+            outline: none;
+        }
+        .search-box button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0.2rem 0.5rem;
+            color: #6b7280;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #4b5563;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: #4f46e5; }
+        .nav-links .user-info {
+            color: #6b7280;
+            font-size: 0.85rem;
+            background: #f3f4f6;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #e5e7eb;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-outline:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary:hover { background: #4338ca; }
+        /* MAIN CONTENT */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+            width: 100%;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #e9edf2;
+        }
+        .card h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 0.5rem;
+        }
+        .card .subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        .alert-success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #e9edf2;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .product-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: #f1f5f9;
+        }
+        .product-info {
+            padding: 1rem;
+        }
+        .product-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 0.3rem;
+        }
+        .product-info .desc {
+            font-size: 0.85rem;
+            color: #6b7280;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .product-info .price {
+            font-weight: 700;
+            color: #4f46e5;
+            font-size: 1.1rem;
+        }
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+            .search-box { max-width: 100%; margin: 0.5rem 0; }
+            .nav-links { justify-content: center; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">
+            🥃 Destilería <span>Highland</span>
+            <small>— Whisky Premium</small>
+        </a>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Buscar producto..." aria-label="Buscar">
+            <button id="searchBtn">🔍</button>
+        </div>
+        <div class="nav-links">
+    <a href="/">Inicio</a>
+    {% if token %}
+        <a href="/dashboard/">Cliente</a>
+        <span class="user-info">👤 {{ nombre }}</span>
+        <a href="/logout/" class="btn-outline">Cerrar sesión</a>
+    {% else %}
+        <a href="/login/" class="btn-primary">Iniciar sesión</a>
+    {% endif %}
+</div>
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // Búsqueda en tiempo real (filtra productos por nombre)
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const productCards = document.querySelectorAll('.product-card');
+            const noResults = document.querySelector('.no-results');
+
+            function filterProducts() {
+                const term = searchInput.value.toLowerCase().trim();
+                let visibleCount = 0;
+                productCards.forEach(card => {
+                    const name = card.querySelector('h3')?.textContent?.toLowerCase() || '';
+                    const desc = card.querySelector('.desc')?.textContent?.toLowerCase() || '';
+                    const match = name.includes(term) || desc.includes(term);
+                    card.style.display = match ? '' : 'none';
+                    if (match) visibleCount++;
+                });
+                // Mostrar mensaje si no hay resultados
+                if (noResults) {
+                    noResults.style.display = visibleCount === 0 ? '' : 'none';
+                }
+            }
+
+            searchInput.addEventListener('input', filterProducts);
+            document.getElementById('searchBtn')?.addEventListener('click', filterProducts);
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
